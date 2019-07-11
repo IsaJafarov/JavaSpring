@@ -11,7 +11,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -43,5 +45,25 @@ public class BusinessServiceImpl implements BusinessService {
     public Optional<BusinessDTO> getById(Long id) {
         return businessRepository.findById(id)
                 .map(businessMapper::toDTO);
+    }
+
+    @Override
+    public void update(BusinessDTO businessDTO) {
+        businessRepository.update(businessDTO.getName(), businessDTO.getInfo(), businessDTO.getId());
+    }
+
+    @Override
+    public void deleteById(long id) {
+        businessRepository.deleteById(id);
+    }
+
+    @Override
+    public List<BusinessDTO> getAllBusinessList() {
+
+        return businessRepository
+                .findAll()
+                .stream()
+                .map(businessMapper::toDTO)
+                .collect(Collectors.toList());
     }
 }

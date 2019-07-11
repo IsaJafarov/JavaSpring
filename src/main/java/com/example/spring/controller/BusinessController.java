@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -18,7 +18,6 @@ public class BusinessController {
 
     private BusinessService businessService;
     private Logger logger = LoggerFactory.getLogger(BusinessController.class);
-
 
     public BusinessController(BusinessService businessService) {
         this.businessService = businessService;
@@ -46,4 +45,28 @@ public class BusinessController {
 
     }
 
+
+    @PutMapping("/business/update")
+    public ResponseEntity<BusinessDTO> updateBusiness(@RequestBody BusinessDTO businessDTO){
+
+        if ( businessService.getById( businessDTO.getId() ).isPresent() ){
+            businessService.update(businessDTO);
+            return new ResponseEntity<>( businessDTO, HttpStatus.OK);
+        }
+        else
+            return new ResponseEntity<>( businessDTO, HttpStatus.NOT_FOUND);
+
+    }
+
+    @DeleteMapping("/business/{id}")
+    public ResponseEntity deleteBusinessById(@PathVariable("id") long id){
+        businessService.deleteById(id);
+        return new ResponseEntity(HttpStatus.ACCEPTED);
+    }
+
+    @GetMapping("/business")
+    public ResponseEntity<List<BusinessDTO>> getAllBusinessList(){
+        List<BusinessDTO> businessDTOList = businessService.getAllBusinessList();
+        return new ResponseEntity<>(businessDTOList, HttpStatus.OK);
+    }
 }
